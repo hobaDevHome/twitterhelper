@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tweet Launcher (am / pm)</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        direction: rtl;
+        padding: 20px;
+      }
+      select,
+      button {
+        font-size: 18px;
+        margin-top: 10px;
+      }
+      #status {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>📂 اختر الملف: AM أو PM</h2>
+
+    <select id="fileSelector" onchange="loadFile()">
+      <option value="">-- اختر ملف الدعوات --</option>
+      <option value="am.csv">am.csv</option>
+      <option value="pm.csv">pm.csv</option>
+    </select>
+
+    <br />
+    <button onclick="sendNext()" disabled id="nextBtn">التالي</button>
+    <p id="status"></p>
+
+    <script>
+      let invites = [];
+      let index = 0;
+
+      function loadFile() {
+        const filename = document.getElementById("fileSelector").value;
+        if (!filename) return;
+
+        fetch(filename)
+          .then((response) => {
+            if (!response.ok) throw new Error("فشل تحميل الملف");
+            return response.text();
+          })
+          .then((text) => {
+            invites = text.split(/\r?\n/).filter((line) => line.trim() !== "");
+            index = 0;
+            document.getElementById("nextBtn").disabled = false;
+            document.getElementById(
+              "status"
+            ).textContent = `📄 تم تحميل ${invites.length} دعوة من "${filename}"`;
+          })
+          .catch((err) => {
+            console.error(err);
+            document.getElementById("status").textContent =
+              "❌ حدث خطأ أثناء تحميل الملف";
+          });
+      }
+
+      function sendNext() {
+        if (index < invites.length) {
+          const text = encodeURIComponent(invites[index++]);
+          const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
+          window.open(tweetURL, "_blank");
+          document.getElementById(
+            "status"
+          ).textContent = `✅ تم إرسال الدعوة رقم ${index} من ${invites.length}`;
+        } else {
+          alert("🎉 خلصنا كل الدعوات!");
+        }
+      }
+    </script>
+  </body>
+</html>
