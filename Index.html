@@ -32,6 +32,12 @@
     <button onclick="sendNext()" disabled id="nextBtn">التالي</button>
     <p id="status"></p>
 
+    <!-- زر بلوسكاي -->
+    <hr />
+    <h3>📩 دعوات خاصة لبلوسكاي:</h3>
+    <button onclick="sendBluesky()" id="blueBtn">أرسل على Bluesky</button>
+    <p id="statusBlue"></p>
+
     <script>
       let invites = [];
       let index = 0;
@@ -70,6 +76,29 @@
           ).textContent = `✅ تم إرسال الدعوة رقم ${index} من ${invites.length}`;
         } else {
           alert("🎉 خلصنا كل الدعوات!");
+        }
+      }
+
+      // بلوسكاي
+      const blueskyInvites = [
+        "ربنا يسعدك ويروق بالك ويطمنك على ولادك يا دودو @rosede.bsky.social",
+        "ربنا يشفيكي ويوفقك ويريح بالك ويفرح قلبك يا نودا @farawaystar.bsky.social",
+        "ربنا يوفقك ويكتبلك الخير ويرزقك مليون دولار وتسافري انتي وجوزك وولادك على خير قريب يا بيرو @abeergaber.bsky.social",
+      ];
+
+      let blueIndex = 0;
+
+      function sendBluesky() {
+        if (blueIndex < blueskyInvites.length) {
+          const encoded = encodeURIComponent(blueskyInvites[blueIndex++]);
+          // للرابط اللي يفتح البلوسكاي أو المتصفح حسب نظام الجهاز
+          const url = `https://bsky.app/intent/compose?text=${encoded}`;
+          window.open(url, "_blank");
+          document.getElementById(
+            "statusBlue"
+          ).textContent = `✅ تم إرسال دعوة بلوسكاي رقم ${blueIndex} من ${blueskyInvites.length}`;
+        } else {
+          alert("🎉 خلصنا كل دعوات بلوسكاي!");
         }
       }
     </script>
