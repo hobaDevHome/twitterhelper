@@ -71,7 +71,7 @@
         if (index < invites.length) {
           const text = encodeURIComponent(invites[index++]);
           const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
-          window.open(tweetURL);
+          window.open(tweetURL, "_blank");
           document.getElementById(
             "status"
           ).textContent = `✅ تم إرسال الدعوة رقم ${index} من ${invites.length}`;
