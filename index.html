@@ -26,6 +26,7 @@
       <option value="">-- اختر ملف الدعوات --</option>
       <option value="am.csv">am.csv</option>
       <option value="pm.csv">pm.csv</option>
+      <option value="test.csv">test.csv</option>
     </select>
 
     <br />
@@ -70,7 +71,8 @@
         if (index < invites.length) {
           const text = encodeURIComponent(invites[index++]);
           const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
-          window.open(tweetURL, "_blank");
+          window.location.href = tweetURL;
+
           document.getElementById(
             "status"
           ).textContent = `✅ تم إرسال الدعوة رقم ${index} من ${invites.length}`;
