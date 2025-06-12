@@ -10,8 +10,8 @@
         padding: 20px;
       }
       select,
-      button,
-      input {
+      input,
+      button {
         font-size: 18px;
         margin-top: 10px;
       }
@@ -41,31 +41,20 @@
     <button onclick="sendBluesky()" id="blueBtn">أرسل على Bluesky</button>
     <p id="statusBlue"></p>
 
-    <!-- الجزء الجديد -->
     <hr />
-    <h3>🐦 إرسال يدوي من سطر معين على تويتر:</h3>
-
-    <label for="fileSelectorManual">📂 اختر ملف:</label>
-    <select id="fileSelectorManual" onchange="loadFileManual()">
+    <!-- الجزء الجديد -->
+    <h3>🐦 إرسال دعوة من رقم سطر معين (تويتر)</h3>
+    <select id="manualFileSelector" onchange="loadManualFile()">
       <option value="">-- اختر ملف الدعوات --</option>
       <option value="am.csv">am.csv</option>
       <option value="pm.csv">pm.csv</option>
     </select>
-    <br />
 
-    <label for="startIndexManual">ابدئي من السطر رقم:</label>
-    <input
-      type="number"
-      id="startIndexManual"
-      min="1"
-      style="width: 80px"
-      value="1"
-    />
     <br />
-
-    <button onclick="sendFromCustomLine()" id="manualBtn" disabled>
-      أرسل من هذا السطر على تويتر
-    </button>
+    <label for="lineNumber">ابدأ من السطر رقم:</label>
+    <input type="number" id="lineNumber" min="1" />
+    <br />
+    <button onclick="sendManualTweet()" disabled id="manualBtn">أرسل</button>
     <p id="statusManual"></p>
 
     <script>
@@ -116,7 +105,6 @@
         "ربنا يشفيكي ويوفقك ويريح بالك ويفرح قلبك يا نودا @farawaystar.bsky.social",
         "ربنا يوفقك ويكتبلك الخير ويرزقك مليون دولار وتسافري انتي وجوزك وولادك على خير قريب يا بيرو @abeergaber.bsky.social",
       ];
-
       let blueIndex = 0;
 
       function sendBluesky() {
@@ -132,11 +120,11 @@
         }
       }
 
-      // الجزء الجديد: تحميل الملف واستخدامه مع اختيار السطر
+      // الجزء الجديد: إرسال دعوة من رقم معين
       let manualInvites = [];
 
-      function loadFileManual() {
-        const filename = document.getElementById("fileSelectorManual").value;
+      function loadManualFile() {
+        const filename = document.getElementById("manualFileSelector").value;
         if (!filename) return;
 
         fetch(filename)
@@ -160,27 +148,25 @@
           });
       }
 
-      function sendFromCustomLine() {
-        const customIndexInput =
-          document.getElementById("startIndexManual").value;
-        let customIndex = parseInt(customIndexInput) - 1;
+      function sendManualTweet() {
+        const lineInput = document.getElementById("lineNumber").value;
+        const lineNumber = parseInt(lineInput);
 
         if (
-          isNaN(customIndex) ||
-          customIndex < 0 ||
-          customIndex >= manualInvites.length
+          isNaN(lineNumber) ||
+          lineNumber < 1 ||
+          lineNumber > manualInvites.length
         ) {
-          alert("❌ رقم السطر غير صالح");
+          alert("⚠️ من فضلك أدخل رقم سطر صحيح");
           return;
         }
 
-        const text = encodeURIComponent(manualInvites[customIndex]);
+        const text = encodeURIComponent(manualInvites[lineNumber - 1]);
         const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
         window.open(tweetURL, "_blank");
-
         document.getElementById(
           "statusManual"
-        ).textContent = `✅ تم إرسال الدعوة من السطر رقم ${customIndex + 1}`;
+        ).textContent = `✅ تم إرسال الدعوة رقم ${lineNumber}`;
       }
     </script>
   </body>
