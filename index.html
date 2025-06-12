@@ -20,6 +20,11 @@
       #statusManual {
         margin-top: 15px;
       }
+      #reminder {
+        color: red;
+        font-weight: bold;
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
@@ -35,14 +40,13 @@
     <button onclick="sendNext()" disabled id="nextBtn">التالي</button>
     <p id="status"></p>
 
-    <!-- زر بلوسكاي -->
     <hr />
     <h3>📩 دعوات خاصة لبلوسكاي:</h3>
     <button onclick="sendBluesky()" id="blueBtn">أرسل على Bluesky</button>
+    <span id="reminder"></span>
     <p id="statusBlue"></p>
 
     <hr />
-    <!-- الجزء الجديد -->
     <h3>🐦 إرسال دعوة من رقم سطر معين (تويتر)</h3>
     <select id="manualFileSelector" onchange="loadManualFile()">
       <option value="">-- اختر ملف الدعوات --</option>
@@ -58,7 +62,6 @@
     <p id="statusManual"></p>
 
     <script>
-      // الجزء الأول
       let invites = [];
       let index = 0;
 
@@ -78,6 +81,14 @@
             document.getElementById(
               "status"
             ).textContent = `📄 تم تحميل ${invites.length} دعوة من "${filename}"`;
+
+            // تنبيه عند اختيار ملف pm.csv
+            const reminder = document.getElementById("reminder");
+            if (filename === "pm.csv") {
+              reminder.textContent = "↪ لا تنسَ إرسال دعوات بلوسكاي!";
+            } else {
+              reminder.textContent = "";
+            }
           })
           .catch((err) => {
             console.error(err);
@@ -99,7 +110,6 @@
         }
       }
 
-      // بلوسكاي
       const blueskyInvites = [
         "ربنا يسعدك ويروق بالك ويطمنك على ولادك يا دودو @rosede.bsky.social",
         "ربنا يشفيكي ويوفقك ويريح بالك ويفرح قلبك يا نودا @farawaystar.bsky.social",
@@ -120,7 +130,6 @@
         }
       }
 
-      // الجزء الجديد: إرسال دعوة من رقم معين
       let manualInvites = [];
 
       function loadManualFile() {
