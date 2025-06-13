@@ -57,13 +57,24 @@
     <br />
     <label for="lineNumber">ابدأ من السطر رقم:</label>
     <input type="number" id="lineNumber" min="1" />
+
     <br />
-    <button onclick="sendManualTweet()" disabled id="manualBtn">أرسل</button>
+    <button onclick="sendManualTweet()" disabled id="manualBtn">
+      أرسل السطر
+    </button>
+    <button onclick="setStartAndEnableNext()" disabled id="startFromBtn">
+      ابدأ من هنا
+    </button>
+    <button onclick="sendNextManual()" disabled id="manualNextBtn">
+      التالي
+    </button>
+
     <p id="statusManual"></p>
 
     <script>
       let invites = [];
       let index = 0;
+      let tweetWindow;
 
       function loadFile() {
         const filename = document.getElementById("fileSelector").value;
@@ -82,7 +93,6 @@
               "status"
             ).textContent = `📄 تم تحميل ${invites.length} دعوة من "${filename}"`;
 
-            // تنبيه عند اختيار ملف pm.csv
             const reminder = document.getElementById("reminder");
             if (filename === "pm.csv") {
               reminder.textContent = "↪ لا تنسَ إرسال دعوات بلوسكاي!";
@@ -101,7 +111,12 @@
         if (index < invites.length) {
           const text = encodeURIComponent(invites[index++]);
           const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
-          window.open(tweetURL, "_blank");
+          if (!tweetWindow || tweetWindow.closed) {
+            tweetWindow = window.open(tweetURL, "_blank");
+          } else {
+            tweetWindow.location.href = tweetURL;
+            tweetWindow.focus();
+          }
           document.getElementById(
             "status"
           ).textContent = `✅ تم إرسال الدعوة رقم ${index} من ${invites.length}`;
@@ -131,6 +146,7 @@
       }
 
       let manualInvites = [];
+      let manualStartIndex = null;
 
       function loadManualFile() {
         const filename = document.getElementById("manualFileSelector").value;
@@ -146,6 +162,7 @@
               .split(/\r?\n/)
               .filter((line) => line.trim() !== "");
             document.getElementById("manualBtn").disabled = false;
+            document.getElementById("startFromBtn").disabled = false;
             document.getElementById(
               "statusManual"
             ).textContent = `📄 تم تحميل ${manualInvites.length} دعوة من "${filename}"`;
@@ -172,10 +189,63 @@
 
         const text = encodeURIComponent(manualInvites[lineNumber - 1]);
         const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
-        window.open(tweetURL, "_blank");
+
+        if (!tweetWindow || tweetWindow.closed) {
+          tweetWindow = window.open(tweetURL, "_blank");
+        } else {
+          tweetWindow.location.href = tweetURL;
+          tweetWindow.focus();
+        }
+
         document.getElementById(
           "statusManual"
         ).textContent = `✅ تم إرسال الدعوة رقم ${lineNumber}`;
+      }
+
+      function setStartAndEnableNext() {
+        const lineInput = document.getElementById("lineNumber").value;
+        const lineNumber = parseInt(lineInput);
+
+        if (
+          isNaN(lineNumber) ||
+          lineNumber < 1 ||
+          lineNumber > manualInvites.length
+        ) {
+          alert("⚠️ من فضلك أدخل رقم سطر صحيح");
+          return;
+        }
+
+        manualStartIndex = lineNumber - 1;
+        document.getElementById("manualNextBtn").disabled = false;
+
+        document.getElementById(
+          "statusManual"
+        ).textContent = `📌 تم التهيئة من السطر ${lineNumber}، اضغطي "التالي" للمتابعة.`;
+      }
+
+      function sendNextManual() {
+        if (
+          manualStartIndex === null ||
+          manualStartIndex >= manualInvites.length
+        ) {
+          alert("🎉 خلصنا كل الدعوات!");
+          return;
+        }
+
+        const text = encodeURIComponent(manualInvites[manualStartIndex]);
+        const tweetURL = `https://twitter.com/intent/tweet?text=${text}`;
+
+        if (!tweetWindow || tweetWindow.closed) {
+          tweetWindow = window.open(tweetURL, "_blank");
+        } else {
+          tweetWindow.location.href = tweetURL;
+          tweetWindow.focus();
+        }
+
+        manualStartIndex++;
+        document.getElementById(
+          "statusManual"
+        ).textContent = `✅ تم إرسال الدعوة رقم ${manualStartIndex}`;
       }
     </script>
   </body>
