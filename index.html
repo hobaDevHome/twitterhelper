@@ -72,6 +72,13 @@
     <p id="statusManual"></p>
 
     <script>
+      const fileUrls = {
+        "am.csv":
+          "https://docs.google.com/spreadsheets/d/1KkM6dMGfOdg0GrEGJQTN1aI0Z5BtnyGy-hgwKS1ueSY/export?format=csv",
+        "pm.csv":
+          "https://docs.google.com/spreadsheets/d/1GRP2vIKYKQEhFgcjZ0lHeGsFSC4UadmS520tihjetVs/export?format=csv",
+      };
+
       let invites = [];
       let index = 0;
       let tweetWindow;
@@ -80,7 +87,9 @@
         const filename = document.getElementById("fileSelector").value;
         if (!filename) return;
 
-        fetch(filename)
+        const fileUrl = fileUrls[filename];
+
+        fetch(fileUrl)
           .then((response) => {
             if (!response.ok) throw new Error("فشل تحميل الملف");
             return response.text();
@@ -152,7 +161,9 @@
         const filename = document.getElementById("manualFileSelector").value;
         if (!filename) return;
 
-        fetch(filename)
+        const fileUrl = fileUrls[filename];
+
+        fetch(fileUrl)
           .then((response) => {
             if (!response.ok) throw new Error("فشل تحميل الملف");
             return response.text();
