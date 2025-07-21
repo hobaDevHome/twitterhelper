@@ -71,6 +71,9 @@
 
     <p id="statusManual"></p>
 
+    <!-- استدعاء مكتبة PapaParse من CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
     <script>
       const fileUrls = {
         "am.csv":
@@ -94,11 +97,14 @@
             if (!response.ok) throw new Error("فشل تحميل الملف");
             return response.text();
           })
-          .then((text) => {
-            invites = text
-              .split(/\r?\n/)
-              .map((line) => line.split(",")[0].trim()) // أول عمود فقط
-              .filter((line) => line !== "");
+          .then((csvText) => {
+            const results = Papa.parse(csvText, {
+              header: false,
+              skipEmptyLines: true,
+            });
+
+            // نأخذ العمود الأول، مع المحافظة على الأسطر الجديدة داخل النص
+            invites = results.data.map((row) => row[0]);
 
             index = 0;
             document.getElementById("nextBtn").disabled = false;
@@ -172,11 +178,13 @@
             if (!response.ok) throw new Error("فشل تحميل الملف");
             return response.text();
           })
-          .then((text) => {
-            manualInvites = text
-              .split(/\r?\n/)
-              .map((line) => line.split(",")[0].trim()) // ناخد العمود الأول فقط
-              .filter((value) => value !== "");
+          .then((csvText) => {
+            const results = Papa.parse(csvText, {
+              header: false,
+              skipEmptyLines: true,
+            });
+
+            manualInvites = results.data.map((row) => row[0]);
 
             document.getElementById("manualBtn").disabled = false;
             document.getElementById("startFromBtn").disabled = false;
