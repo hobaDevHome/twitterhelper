@@ -95,7 +95,11 @@
             return response.text();
           })
           .then((text) => {
-            invites = text.split(/\r?\n/).filter((line) => line.trim() !== "");
+            invites = text
+              .split(/\r?\n/)
+              .map((line) => line.split(",")[0].trim()) // أول عمود فقط
+              .filter((line) => line !== "");
+
             index = 0;
             document.getElementById("nextBtn").disabled = false;
             document.getElementById(
@@ -171,7 +175,9 @@
           .then((text) => {
             manualInvites = text
               .split(/\r?\n/)
-              .filter((line) => line.trim() !== "");
+              .map((line) => line.split(",")[0].trim()) // ناخد العمود الأول فقط
+              .filter((value) => value !== "");
+
             document.getElementById("manualBtn").disabled = false;
             document.getElementById("startFromBtn").disabled = false;
             document.getElementById(
